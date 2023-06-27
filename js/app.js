@@ -1,17 +1,4 @@
-(function () {
-'use strict';
-
 const SVGNS = "http://www.w3.org/2000/svg";
-
-(function() {
-	const values = [.5, .7, .1, .2, .8, .4, .9, .3, .6, .01, .99, .68, .38, .18, .77, .91, .53, .22, .47];
-	function r() {
-		r.seed++;
-		return values[r.seed % values.length];
-	}
-	r.seed = 0;
-//	Math.random = r;
-})();
 
 function clamp(x, min, max) {
 	return Math.max(min, Math.min(max, x));
@@ -187,6 +174,16 @@ class Canvas {
 			defs.appendChild(cp);
 			cp.setAttribute("id", "clip");
 			cp.setAttribute("clipPathUnits", "objectBoundingBox");
+
+			let filters = document.createElementNS(SVGNS, "filter");
+			defs.appendChild(filters);
+			filters.setAttribute("id", "blur");
+
+			let feGaussianBlur = document.createElementNS(SVGNS, "feGaussianBlur");
+			filters.appendChild(feGaussianBlur);
+			feGaussianBlur.setAttribute("in", "SourceGraphic");
+			/* Configure this at some point */
+			feGaussianBlur.setAttribute("stdDeviation", cfg.blurLevel);
 			
 			let rect = svgRect(cfg.width, cfg.height);
 			cp.appendChild(rect);
@@ -194,6 +191,11 @@ class Canvas {
 			rect = svgRect(cfg.width, cfg.height);
 			rect.setAttribute("fill", cfg.fill);
 			node.appendChild(rect);
+
+			let group = document.createElementNS(SVGNS, "g");
+			group.setAttribute("id", "output");
+			group.setAttribute("filter", "url(#blur)");
+			node.appendChild(group);
 
 			return node;
 		} else {
@@ -301,8 +303,8 @@ class Canvas {
 	}
 
 	distance(otherCanvas) {
-		let difference$$1 = this.difference(otherCanvas);
-		return differenceToDistance(difference$$1, this.node.width*this.node.height);
+		let difference = this.difference(otherCanvas);
+		return differenceToDistance(difference, this.node.width*this.node.height);
 	}
 
 	drawStep(step) {
@@ -313,6 +315,7 @@ class Canvas {
 	}
 }
 
+/* Shape: a geometric primitive with a bbox */
 class Shape {
 	static randomPoint(width, height) {
 		return [~~(Math.random()*width), ~~(Math.random()*height)];
@@ -618,7 +621,7 @@ class Smiley extends Shape {
 	}
 }
 
-const numberFields = ["computeSize", "viewSize", "steps", "shapes", "alpha", "mutations"];
+const numberFields = ["computeSize", "viewSize", "steps", "shapes", "alpha", "mutations", "targetSimilarityPercent", "blurLevel"];
 const boolFields = ["mutateAlpha"];
 const fillField = "fill";
 const shapeField = "shapeType";
@@ -643,12 +646,6 @@ function init$1() {
 	let ranges = document.querySelectorAll("[type=range]");
 	Array.from(ranges).forEach(fixRange);
 }
-
-function lock() {
-	/* fixme */
-}
-
-
 
 function getConfig() {
 	let form = document.querySelector("form");
@@ -691,6 +688,7 @@ class State {
 	}
 }
 
+/* Step: a Shape, color and alpha */
 class Step {
 	constructor(shape, cfg) {
 		this.shape = shape;
@@ -705,7 +703,7 @@ class Step {
 	toSVG() {
 		let node = this.shape.toSVG();
 		node.setAttribute("fill", this.color);
-		node.setAttribute("fill-opacity", this.alpha.toFixed(2));
+		node.setAttribute("opacity", this.alpha.toFixed(2));
 		return node;
 	}
 
@@ -776,7 +774,7 @@ class Optimizer {
 	}
 
 	_continue() {
-		if (this._steps < this.cfg.steps) {
+		if ((this._steps < this.cfg.steps) && (this.state.distance > 1 - this.cfg.targetSimilarityPercent / 100)) {
 			setTimeout(() => this._addShape(), 10);
 		} else {
 			let time = Date.now() - this._ts;
@@ -855,7 +853,6 @@ const nodes = {
 let steps;
 
 function go(original, cfg) {
-	lock();
 
 	nodes.steps.innerHTML = "";
 	nodes.original.innerHTML = "";
@@ -879,12 +876,14 @@ function go(original, cfg) {
 	svg.setAttribute("height", cfg2.height);
 	nodes.vector.appendChild(svg);
 
+	let output = svg.getElementById("output");
+
 	let serializer = new XMLSerializer();
 
 	optimizer.onStep = (step) => {
 		if (step) {
 			result.drawStep(step);
-			svg.appendChild(step.toSVG());
+			output.appendChild(step.toSVG());
 			let percent = (100*(1-step.distance)).toFixed(2);
 			nodes.vectorText.value = serializer.serializeToString(svg);
 			nodes.steps.innerHTML = `(${++steps} of ${cfg.steps}, ${percent}% similar)`;
@@ -914,7 +913,7 @@ function onSubmit(e) {
 	Canvas.original(url, cfg).then(original => go(original, cfg));
 }
 
-function init$$1() {
+function init() {
 	nodes.output.style.display = "none";
 	nodes.types.forEach(input => input.addEventListener("click", syncType));
 	init$1();
@@ -929,6 +928,4 @@ function syncType() {
 	});
 }
 
-init$$1();
-
-}());
+init();

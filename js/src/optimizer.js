@@ -32,7 +32,7 @@ export default class Optimizer {
 	}
 
 	_continue() {
-		if (this._steps < this.cfg.steps) {
+		if ((this._steps < this.cfg.steps) && (this.state.distance > 1 - this.cfg.targetSimilarityPercent / 100)) {
 			setTimeout(() => this._addShape(), 10);
 		} else {
 			let time = Date.now() - this._ts;

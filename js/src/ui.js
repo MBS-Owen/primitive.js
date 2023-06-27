@@ -1,6 +1,6 @@
 import {Triangle, Rectangle, Ellipse, Smiley} from "./shape.js";
 
-const numberFields = ["computeSize", "viewSize", "steps", "shapes", "alpha", "mutations"];
+const numberFields = ["computeSize", "viewSize", "steps", "shapes", "alpha", "mutations", "targetSimilarityPercent", "blurLevel"];
 const boolFields = ["mutateAlpha"];
 const fillField = "fill";
 const shapeField = "shapeType";

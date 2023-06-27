@@ -25,7 +25,15 @@
 				<p>Add <span class="value"></span> geometric shapes
 					<em>(large number: better results, slower)</em>
 				</p>
-				<input name="steps" type="range" min="1" max="500" value="50" />
+				<input name="steps" type="range" min="1" max="500" value="100" />
+			</div>
+			<div>
+				<p>Target similarity <span class="value"></span>%</p>
+				<input name="targetSimilarityPercent" type="range" min="0" max="100" value="90" />
+			</div>
+			<div>
+				<p>Blur level: <span class="value"></span></p>
+				<input name="blurLevel" type="range" min="0" max="10" value="3" />
 			</div>
 			<div>
 				<p>Use these shape types:</p>
@@ -53,7 +61,7 @@
 			</div>
 			<div>
 				<p>Viewing size: <span class="value"></span> pixels</p>
-				<input name="viewSize" type="range" min="256" max="2048" value="512" />
+				<input name="viewSize" type="range" min="256" max="2048" value="1024" />
 			</div>
 			<div>
 				<p>Start every iteration with <span class="value"></span> random shapes
@@ -82,8 +90,8 @@
 				<h3>Result <span id="steps"></span></h3>
 				<div class="raster" id="raster"></div>
 				<div class="vector" id="vector"></div>
-				<label><input type="radio" name="type" value="raster" checked="checked" />Raster image: right-click to save</label><br/>
-				<label><input type="radio" name="type" value="vector" />Vector image: copy&amp;paste data from the text area below</label><br/>
+				<label><input type="radio" name="type" value="raster" />Raster image: right-click to save</label><br/>
+				<label><input type="radio" name="type" value="vector" checked="checked" />Vector image: copy&amp;paste data from the text area below</label><br/>
 				<textarea class="vector" id="vector-text" spellcheck="false"></textarea>
 			</div>
 		</section>

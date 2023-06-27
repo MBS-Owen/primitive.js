@@ -54,6 +54,16 @@ export default class Canvas {
 			defs.appendChild(cp);
 			cp.setAttribute("id", "clip");
 			cp.setAttribute("clipPathUnits", "objectBoundingBox");
+
+			let filters = document.createElementNS(util.SVGNS, "filter");
+			defs.appendChild(filters);
+			filters.setAttribute("id", "blur");
+
+			let feGaussianBlur = document.createElementNS(util.SVGNS, "feGaussianBlur");
+			filters.appendChild(feGaussianBlur);
+			feGaussianBlur.setAttribute("in", "SourceGraphic");
+			/* Configure this at some point */
+			feGaussianBlur.setAttribute("stdDeviation", cfg.blurLevel);
 			
 			let rect = svgRect(cfg.width, cfg.height);
 			cp.appendChild(rect);
@@ -61,6 +71,11 @@ export default class Canvas {
 			rect = svgRect(cfg.width, cfg.height);
 			rect.setAttribute("fill", cfg.fill);
 			node.appendChild(rect);
+
+			let group = document.createElementNS(util.SVGNS, "g");
+			group.setAttribute("id", "output");
+			group.setAttribute("filter", "url(#blur)");
+			node.appendChild(group);
 
 			return node;
 		} else {

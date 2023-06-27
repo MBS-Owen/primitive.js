@@ -16,7 +16,7 @@ export default class Step {
 	toSVG() {
 		let node = this.shape.toSVG();
 		node.setAttribute("fill", this.color);
-		node.setAttribute("fill-opacity", this.alpha.toFixed(2));
+		node.setAttribute("opacity", this.alpha.toFixed(2));
 		return node;
 	}
 
