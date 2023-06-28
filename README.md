@@ -1,14 +1,14 @@
 # primitive.js
 
-A JavaScript re-creation of the [primitive.lol](http://primitive.lol/) application.
+A modification of a JavaScript re-creation of the [primitive.lol](http://primitive.lol/) application.
 
-## How does it look?
+## What's been changed
 
-Check out the [Masterpieces](https://cielitolindo.de/albums/masterpieces/) gallery for several cool samples. There is also a dedicated [Electron-based port](https://github.com/cielito-lindo-productions/primitive.nextgen) that works as a regular desktop application.
+This fork introduces a gaussian blur over the existing primitive.js to act as a low bandwidth fallback for high resolution images.
 
 ## Try it now!
 
-[At a dedicated demo page](https://ondras.github.io/primitive.js/)
+[At a dedicated demo page](https://mbs-owen.github.io/primitive.js/)
 
 ## Building
 
