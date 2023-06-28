@@ -125,7 +125,8 @@ export function computeColorAndDifferenceChange(offset, imageData, alpha) {
 	let rgb = computeColor(offset, imageData, alpha);
 	let differenceChange = computeDifferenceChange(offset, imageData, rgb);
 
-	let color = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+	let toHex = (num) => num.toString(16).padStart(2, 0)
+	let color = `#${toHex(rgb[0])}${toHex(rgb[1])}${toHex(rgb[2])}`;
 
 	return {color, differenceChange};
 }

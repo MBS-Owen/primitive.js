@@ -26,7 +26,8 @@ function getFill(canvas) {
 	}
 
 	rgb = rgb.map(x => ~~(x/count)).map(util.clampColor);
-	return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+	let toHex = (num) => num.toString(16).padStart(2, 0)
+	return `#${toHex(rgb[0])}${toHex(rgb[1])}${toHex(rgb[2])}`;
 }
 
 function svgRect(w, h) {
